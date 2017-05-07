@@ -74,29 +74,41 @@ def extract_features(image, expected):
 
     density = sum(sum(row) for row in image) / (height*width)
 
-    x = 0
+    matches = 0
     for irow in range(height//2):
-        for col in range(len(image[irow])):
+        for col in range(width):
             if image[irow][col] == image[irow+height//2][col]:
-                x += 1
-    symmetry_horz = x / (height*width)  # symmetry across horizontal axis
+                matches += 1
+    symmetry_horz = matches / (height*width)  # symmetry across horizontal axis
 
-    x = 0
-    for irow in range(height//2):
-        for col in range(len(tpose[irow])):
-            if tpose[irow][col] == tpose[irow+height//2][col]:
-                x += 1
-    symmetry_vert = x / (height*width)  # symmetry across vertical axis
-
-
+    matches = 0
+    # height in original becomes width in transpose
+    for irow in range(width//2):
+        for col in range(height):
+            if tpose[irow][col] == tpose[irow+width//2][col]:
+                matches += 1
+    symmetry_vert = matches / (height*width)  # symmetry across vertical axis
     #
 
-    intersect_horz_min = 0.0
+    intersect_horz_min = height  # minimum count of intersections in any row
+    intersect_horz_max = 0  # maximum count of intersections in any row
+    for row in image:
+        intersections = 0
+        for i in range(1, len(row)):
+            if row[i-1] == 1 and row[i] == 0:
+                intersections += 1
+        intersect_horz_min = min(intersect_horz_min, intersections)
+        intersect_horz_max = max(intersect_horz_max, intersections)
 
-    intersect_horz_max = 0.0
-
-    intersect_vert_min = 0.0
-    intersect_vert_max = 0.0
+    intersect_vert_min = 0  # minimum count of intersections in any column
+    intersect_vert_max = 0  # maximum count of intersections in any column
+    for row in tpose:
+        intersections = 0
+        for i in range(1, len(row)):
+            if row[i-1] == 1 and row[i] == 0:
+                intersections += 1
+        intersect_vert_min = min(intersect_vert_min, intersections)
+        intersect_vert_max = max(intersect_vert_max, intersections)
 
     features = [density, symmetry_vert, symmetry_horz,
                 intersect_horz_min, intersect_horz_max, intersect_vert_min, intersect_vert_max, expected]
