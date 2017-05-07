@@ -22,7 +22,7 @@ def main():
     being the values of the features, and the expected will be feature[-1]
     """
 
-    Perceptron.train_weights(raw, 0.1, len(raw))
+    # Perceptron.train_weights(raw, 0.1, len(raw))
 
     print('done')
 
@@ -68,12 +68,26 @@ def load_images():
 
 
 def extract_features(image, expected):
+    height, width = len(image), len(image[0])
+
     tpose = list(zip(*image))  # transpose image for easier vertical analysis
 
-    density = sum(sum(row) for row in image) / (sum(len(row) for row in image))
+    density = sum(sum(row) for row in image) / (height*width)
 
-    symmetry_horz = 0.0
-    symmetry_vert = 0.0
+    x = 0
+    for irow in range(height//2):
+        for col in range(len(image[irow])):
+            if image[irow][col] == image[irow+height//2][col]:
+                x += 1
+    symmetry_horz = x / (height*width)  # symmetry across horizontal axis
+
+    x = 0
+    for irow in range(height//2):
+        for col in range(len(tpose[irow])):
+            if tpose[irow][col] == tpose[irow+height//2][col]:
+                x += 1
+    symmetry_vert = x / (height*width)  # symmetry across vertical axis
+
 
     #
 
