@@ -9,13 +9,13 @@
 sampleweights = [-.1, .2, .3, -.4]
 # dataset[i][0] = density
 # dataset[i][1] = symmetry
-# dataset[i][2] = maxium number of line intersections
+# dataset[i][2] = maximum number of line intersections
 # dataset[i][-1/3] = expected
 sampledataset = [[.4, .2, .3, 0], [1, .53, .99, 1], [.982, 3.1, .23, 1], [.33, 1, 2, 0]]
 
 
 def predict(inputs, weights):
-    # weights[0] is the threashold
+    # weights[0] is the threshold
     activation = weights[0]
     # print("weights:" + str(weights))
     # print("inputs:" + str(inputs))
@@ -26,8 +26,10 @@ def predict(inputs, weights):
 
 
 def train_weights(train, l_rate, n_epoch):
-    weights = [0.0 for _ in range(len(train[0]))]
+    weights = [0.0] * len(train[0])
     # epoch = times to train
+    best_weights = weights
+    best_error = -1
     for epoch in range(n_epoch):
         sum_error = 0.0
         # begin training
@@ -39,8 +41,10 @@ def train_weights(train, l_rate, n_epoch):
             weights[0] = weights[0] + l_rate * error
             for i in range(len(row) - 1):
                 weights[i + 1] = weights[i + 1] + l_rate * error * row[i]
-        print('>epoch=%d, lrate=%.3f, error=%.3f' % (epoch, l_rate, sum_error))
-    return weights
+        if best_error == -1 or best_error > sum_error:
+            best_weights = weights
+        # print('>epoch=%d, lrate=%.3f, error=%.3f' % (epoch, l_rate, sum_error))
+    return best_weights
 
 
 """
@@ -61,8 +65,8 @@ def main():
     print(weights)
 
     # for row in sampledataset:
-    #   predicton = predict(row,sampleweights)
-    #  print("Expected=%d, Predicted=%d" % (row[-1],predicton))
+    #   prediction = predict(row,sampleweights)
+    #  print("Expected=%d, Predicted=%d" % (row[-1],prediction))
 
 
 main()
