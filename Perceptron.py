@@ -1,5 +1,5 @@
-#inputs will only contain 1's or 0's
-#weights will contain inputs+1, the extra weight is for the threshold
+# inputs will only contain 1's or 0's
+# weights will contain inputs+1, the extra weight is for the threshold
 
 
 # weight[0] = threshold
@@ -17,8 +17,8 @@ sampledataset = [[.4, .2, .3, 0], [1, .53, .99, 1], [.982, 3.1, .23, 1], [.33, 1
 def predict(inputs, weights):
     # weights[0] is the threashold
     activation = weights[0]
-    #print("weights:" + str(weights))
-    #print("inputs:" + str(inputs))
+    # print("weights:" + str(weights))
+    # print("inputs:" + str(inputs))
     # Sum wi * Ii
     for i in range(len(inputs) - 1):
         activation += weights[i + 1] * inputs[i]
@@ -26,7 +26,7 @@ def predict(inputs, weights):
 
 
 def train_weights(train, l_rate, n_epoch):
-    weights = [0.0 for i in range(len(train[0]))]
+    weights = [0.0 for _ in range(len(train[0]))]
     # epoch = times to train
     for epoch in range(n_epoch):
         sum_error = 0.0
@@ -43,8 +43,7 @@ def train_weights(train, l_rate, n_epoch):
     return weights
 
 
-
-'''
+"""
 def main():
     dataset = [[2.7810836, 2.550537003, 0],
                [1.465489372, 2.362125076, 0],
@@ -67,4 +66,4 @@ def main():
 
 
 main()
-'''
+"""
