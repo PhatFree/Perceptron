@@ -26,15 +26,18 @@ def main():
     being the values of the features, and the expected will be feature[-1]
     """
 
-    weights = Perceptron.train_weights(train, 0.1, 100)
-    print('perceptron trained')
+    epochs = 100  # or len(train) or whatever
+    weights = Perceptron.train_weights(train, 0.1, epochs)
+    print('perceptron trained ({0} epochs)'.format(epochs))
+    print('using weights:')
+    print(weights)
 
     correct = 0
     for i in range(len(test)):
         prediction = Perceptron.predict(test[i], weights)
         if prediction == test[i][-1]:
             correct += 1
-    print('accuracy: {0:.4}%'.format(correct * 100 / len(test)))
+    print('testing accuracy: {0:.4}%'.format(correct * 100 / len(test)))
 
     print('done')
 
