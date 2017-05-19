@@ -1,3 +1,4 @@
+
 # inputs will only contain 1's or 0's
 # weights will contain inputs+1, the extra weight is for the threshold
 
@@ -8,7 +9,7 @@
 # weight[3] = maxium number of line intersections
 sampleweights = [-.1, .2, .3, -.4]
 # dataset[i][0] = density
-# dataset[i][1] = symmetry
+# dataset[i][1] = symmetry1
 # dataset[i][2] = maximum number of line intersections
 # dataset[i][-1/3] = expected
 sampledataset = [[.4, .2, .3, 0], [1, .53, .99, 1], [.982, 3.1, .23, 1], [.33, 1, 2, 0]]
@@ -47,27 +48,3 @@ def train_weights(train, l_rate, n_epoch):
     return best_weights
 
 
-"""
-def main():
-    dataset = [[2.7810836, 2.550537003, 0],
-               [1.465489372, 2.362125076, 0],
-               [3.396561688, 4.400293529, 0],
-               [1.38807019, 1.850220317, 0],
-               [3.06407232, 3.005305973, 0],
-               [7.627531214, 2.759262235, 1],
-               [5.332441248, 2.088626775, 1],
-               [6.922596716, 1.77106367, 1],
-               [8.675418651, -0.242068655, 1],
-               [7.673756466, 3.508563011, 1]]
-    l_rate = 0.1
-    n_epoch = 10
-    weights = train_weights(dataset, l_rate, n_epoch)
-    print(weights)
-
-    # for row in sampledataset:
-    #   prediction = predict(row,sampleweights)
-    #  print("Expected=%d, Predicted=%d" % (row[-1],prediction))
-
-
-main()
-"""

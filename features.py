@@ -1,4 +1,4 @@
-import Perceptron
+import perceptron
 import random
 
 
@@ -27,14 +27,14 @@ def main():
     """
 
     epochs = 1  # or len(train) or whatever
-    weights = Perceptron.train_weights(train, 0.1, epochs)
+    weights = perceptron.train_weights(train, 0.1, epochs)
     print('perceptron trained ({0} epochs)'.format(epochs))
     print('using weights:')
     print(weights)
 
     correct = 0
     for i in range(len(test)):
-        prediction = Perceptron.predict(test[i], weights)
+        prediction = perceptron.predict(test[i], weights)
         if prediction == test[i][-1]:
             correct += 1
     print('testing accuracy: {0:.4}%'.format(correct * 100 / len(test)))
