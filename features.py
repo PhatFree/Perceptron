@@ -26,7 +26,7 @@ def main():
     being the values of the features, and the expected will be feature[-1]
     """
 
-    epochs = 100  # or len(train) or whatever
+    epochs = 1  # or len(train) or whatever
     weights = Perceptron.train_weights(train, 0.1, epochs)
     print('perceptron trained ({0} epochs)'.format(epochs))
     print('using weights:')
@@ -47,9 +47,7 @@ def load_images():
         all_lines = data_input.read()
         images = all_lines.split('\n\n\n')  # divide images
 
-        num_ones = 0
-        num_fives = 0
-
+        class_counts = [0] * 10
         img_strings = []  # raw image
         img_classes = []  # expected
 
@@ -58,26 +56,43 @@ def load_images():
 
                 img_strings.append(images[i][1:])
 
-                if images[i][0] == '1':
-                    num_ones += 1
-                    img_classes.append(1)
+                num = ord(images[i][0]) - ord('0')
+                class_counts[num] += 1
+                img_classes.append(num)
 
-                if images[i][0] == '5':
-                    num_fives += 1
-                    img_classes.append(5)
             # else should be at end-of-file
 
         # convert to matrix form
-        raw_images = [None]*(num_fives+num_ones)  # preallocate space
+        raw_images = [None]*(sum(class_counts))
 
         for i in range(len(img_strings)):
             raw_images[i] = [[int(x) for x in line.split()] for line in img_strings[i].split('\n')]
 
-    print(num_ones + num_fives, 'images loaded')
+    print(sum(class_counts), 'images loaded', class_counts)
     return raw_images, img_classes
 
 
 def extract_features(image, expected):
+    # divide image into 4x4 regions
+    # one feature per region, the average pixel value
+
+    features = []
+    rows, cols = len(image) // 4, len(image[0]) // 4
+
+    for r in range(rows):
+        for c in range(cols):
+            sum = 0
+            for i in range(4):
+                for j in range(4):
+                    sum += image[r*4 + i][c*4 + j]
+            avg = sum / (4*4)
+            features.append(avg)
+
+    features.append(expected)
+    return features
+
+
+def extract_meta_features(image, expected):
     height, width = len(image), len(image[0])
     tpose = list(zip(*image))  # transpose image for easier vertical analysis
 
