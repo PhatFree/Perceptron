@@ -36,7 +36,7 @@ class NeuralNetwork:
 
         self.hidden_input = None
         self.hidden_output = None
-    
+
     def getWeights(self):
         return self.hidden_input[:][:], self.hidden_output[:][:]
 
@@ -136,5 +136,5 @@ def train_network(network, train_data, train_labels, test_data, test_labels, lea
             pocket_score = score
 
     network.setWeights(pocket.getWeights())
-    return
+    return pocket_score
 

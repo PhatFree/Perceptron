@@ -28,15 +28,9 @@ def main():
 
     for h in range(10, 20, 10):
         network = new_network(49, h, 10)
-        train_network(network, train, train_labels, test, test_labels, learn_rate, epochs)
+        score = train_network(network, train, train_labels, test, test_labels, learn_rate, epochs)
 
-        correct = 0
-        for i in range(len(test)):
-            output = calculate_network(network, test[i])
-            prediction = reduce(lambda x, y: x if output[x] >= output[y] else y, range(len(output)))
-            if prediction == test_labels[i]:
-                correct += 1
-        print('testing accuracy: {0:.4}%'.format(correct * 100 / len(test)))
+        print('testing accuracy: {0:.4}%'.format(score))
 
     print('done')
 
