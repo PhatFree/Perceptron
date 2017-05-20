@@ -1,41 +1,45 @@
-import perceptron
-import random
+from nnetwork import *
+from functools import reduce
 
 
 def main():
-    print("CS480:AI Homework 4, Problem 4 - Perceptron Training")
+    print("CS480:AI Homework 5, Problem 3 - Neural Network Training")
     images, true_classes = load_images()
 
     train = []
+    train_labels = []
     test = []
+    test_labels = []
+
     for i in range(len(images)):
-        if true_classes[i] == 1:
-            feature = extract_features(images[i], 1)
-        elif true_classes[i] == 5:
-            feature = extract_features(images[i], 0)
-        if random.randint(0, 10) < 8:
+        feature = extract_features(images[i])
+        if random.randint(0, 10) < 9:
             train.append(feature)
+            exp = [0]*10
+            exp[true_classes[i]] = 1
+            train_labels.append(exp)
         else:
             test.append(feature)
-        # print(feature)
+            test_labels.append(true_classes[i])
     print('features extracted')
 
-    """
-    we'll have to create two separate perceptrons, one for 1's and one for fives.
-    they'll have to be passed a 2d array, with rows being "images" and with cols
-    being the values of the features, and the expected will be feature[-1]
-    """
+    epochs = 10
+    learn_rate = 0.01
 
-    epochs = 1  # or len(train) or whatever
-    weights = perceptron.train_weights(train, 0.1, epochs)
-    print('perceptron trained ({0} epochs)'.format(epochs))
-    print('using weights:')
-    print(weights)
+    i = 10
+    # for i in range(10, 20, 10):
+    network = new_network(49, i, 10)
+    train_network(network, train, train_labels, learn_rate, epochs)
+
+    print('finished with', i, 'hidden neurons')
 
     correct = 0
     for i in range(len(test)):
-        prediction = perceptron.predict(test[i], weights)
-        if prediction == test[i][-1]:
+
+        output = calculate_network(network, test[i])
+        prediction = reduce(lambda x, y: x if output[x] >= output[y] else y, range(len(output)))
+        print(output, ':', prediction, 'vs', test_labels[i])
+        if prediction == test_labels[i]:
             correct += 1
     print('testing accuracy: {0:.4}%'.format(correct * 100 / len(test)))
 
@@ -59,7 +63,6 @@ def load_images():
                 num = ord(images[i][0]) - ord('0')
                 class_counts[num] += 1
                 img_classes.append(num)
-
             # else should be at end-of-file
 
         # convert to matrix form
@@ -72,7 +75,7 @@ def load_images():
     return raw_images, img_classes
 
 
-def extract_features(image, expected):
+def extract_features(image):
     # divide image into 4x4 regions
     # one feature per region, the average pixel value
 
@@ -88,53 +91,6 @@ def extract_features(image, expected):
             avg = sum / (4*4)
             features.append(avg)
 
-    features.append(expected)
-    return features
-
-
-def extract_meta_features(image, expected):
-    height, width = len(image), len(image[0])
-    tpose = list(zip(*image))  # transpose image for easier vertical analysis
-
-    density = sum(sum(row) for row in image) / (height*width)
-
-    matches = 0
-    for irow in range(height//2):
-        for col in range(width):
-            if image[irow][col] == image[irow+height//2][col]:
-                matches += 1
-    symmetry_horz = matches / (height*width)  # symmetry across horizontal axis
-
-    matches = 0
-    # height in original becomes width in transpose
-    for irow in range(width//2):
-        for col in range(height):
-            if tpose[irow][col] == tpose[irow+width//2][col]:
-                matches += 1
-    symmetry_vert = matches / (height*width)  # symmetry across vertical axis
-
-    intersect_horz_min = height  # minimum count of intersections in any row
-    intersect_horz_max = 0  # maximum count of intersections in any row
-    for row in image:
-        intersections = 0
-        for i in range(1, len(row)):
-            if row[i-1] == 1 and row[i] == 0:
-                intersections += 1
-        intersect_horz_min = min(intersect_horz_min, intersections)
-        intersect_horz_max = max(intersect_horz_max, intersections)
-
-    intersect_vert_min = 0  # minimum count of intersections in any column
-    intersect_vert_max = 0  # maximum count of intersections in any column
-    for row in tpose:
-        intersections = 0
-        for i in range(1, len(row)):
-            if row[i-1] == 1 and row[i] == 0:
-                intersections += 1
-        intersect_vert_min = min(intersect_vert_min, intersections)
-        intersect_vert_max = max(intersect_vert_max, intersections)
-
-    features = [density, symmetry_vert, symmetry_horz,
-                intersect_horz_min, intersect_horz_max, intersect_vert_min, intersect_vert_max, expected]
     return features
 
 

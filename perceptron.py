@@ -26,8 +26,8 @@ def predict(inputs, weights):
     return 1.0 if activation > 0.0 else 0.0
 
 
-def train_weights(train, l_rate, n_epoch):
-    weights = [0.0] * len(train[0])
+def train_weights(data, l_rate, n_epoch):
+    weights = [0.0] * len(data[0])
     # epoch = times to train
     best_weights = weights
     best_error = -1
@@ -35,7 +35,7 @@ def train_weights(train, l_rate, n_epoch):
         sum_error = 0.0
         # begin training
 
-        for row in train:
+        for row in data:
             prediction = predict(row, weights)
             error = row[-1] - prediction
             sum_error += error ** 2
