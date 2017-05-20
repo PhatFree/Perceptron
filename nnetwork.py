@@ -1,11 +1,10 @@
 import numpy
 import random
+from functools import reduce
 
 
-#sigmoid func
-def sigmoid(x,deriv=False):
-    if(deriv==True):
-        return x*(1-x)
+# sigmoid func
+def sigmoid(x):
     return 1/(1+numpy.exp(-x))
 
 
@@ -37,6 +36,13 @@ class NeuralNetwork:
 
         self.hidden_input = None
         self.hidden_output = None
+    
+    def getWeights(self):
+        return self.hidden_input[:][:], self.hidden_output[:][:]
+
+    def setWeights(self, weights):
+        self.hidden_input = weights[0]
+        self.hidden_output = weights[1]
 
 
 def random_weights(r, c):
@@ -109,10 +115,26 @@ def back_propagate(network, data, expected, learn_rate):
             network.hidden_input[i][j] += learn_rate * dH[j] * network.inputNeurons[i].output
 
 
-def train_network(network, data, labels, learn_rate, epochs):
-
+def train_network(network, train_data, train_labels, test_data, test_labels, learn_rate, epochs):
+    pocket = NeuralNetwork(network.input, network.hidden, network.output)
+    pocket_score = 0
     for i in range(epochs):
         print('epoch:', i)
-        for x in range(len(data)):
-            back_propagate(network, data[x], labels[x], learn_rate)
+        for x in range(len(train_data)):
+            back_propagate(network, train_data[x], train_labels[x], learn_rate)
+        # check vs pocket epoch
+        correct = 0
+        for i in range(len(test_data)):
+            output = calculate_network(network, test_data[i])
+            prediction = reduce(lambda x, y: x if output[x] >= output[y] else y, range(len(output)))
+            if prediction == test_labels[i]:
+                correct += 1
+        score = correct * 100 / len(test_data)
+
+        if score >= pocket_score:
+            pocket.setWeights(network.getWeights())
+            pocket_score = score
+
+    network.setWeights(pocket.getWeights())
+    return
 
