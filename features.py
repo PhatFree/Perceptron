@@ -1,5 +1,4 @@
 from nnetwork import *
-from functools import reduce
 
 
 def main():
@@ -24,7 +23,7 @@ def main():
     print('features extracted')
 
     epochs = 10
-    learn_rate = 0.01
+    learn_rate = 0.1
 
     for h in range(10, 20, 10):
         network = new_network(49, h, 10)

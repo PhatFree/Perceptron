@@ -131,6 +131,7 @@ def train_network(network, train_data, train_labels, test_data, test_labels, lea
                 correct += 1
         score = correct * 100 / len(test_data)
 
+
         if score >= pocket_score:
             pocket.setWeights(network.getWeights())
             pocket_score = score
